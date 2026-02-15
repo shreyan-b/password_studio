@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Password Studio · Strength & Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        /* ===== Reset ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Aurora blue–cyan–purple palette */
+            --bg: #020617;
+            --bg-soft: #030712;
+            --glass: rgba(15, 23, 42, 0.86);
+            --border-subtle: rgba(148, 163, 184, 0.35);
+
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+
+            --accent: #22d3ee;          /* cyan */
+            --accent-soft: rgba(34, 211, 238, 0.45);
+            --accent-alt: #8b5cf6;      /* soft purple */
+            --danger: #fb7185;
+            --success: #4ade80;
+
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --radius-pill: 999px;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background:
+                radial-gradient(circle at 0% 0%, #1f2937 0, #020617 45%, #020617 100%),
+                radial-gradient(circle at 100% 0%, rgba(34, 211, 238, 0.38) 0, transparent 55%),
+                radial-gradient(circle at 0% 100%, rgba(139, 92, 246, 0.42) 0, transparent 55%);
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        /* ===== Layout Wrapper ===== */
+        .shell {
+            max-width: 920px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.9fr);
+            gap: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .shell {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* ===== Glass Panel Base ===== */
+        .glass {
+            position: relative;
+            border-radius: var(--radius-lg);
+            background:
+                radial-gradient(circle at top left, rgba(148, 163, 184, 0.14), transparent 55%),
+                var(--glass);
+            border: 1px solid var(--border-subtle);
+            backdrop-filter: blur(22px) saturate(160%);
+            -webkit-backdrop-filter: blur(22px) saturate(160%);
+            box-shadow:
+                0 22px 40px rgba(3, 7, 18, 0.9),
+                0 0 0 1px rgba(15, 23, 42, 0.9);
+            padding: 22px 22px 18px;
+            overflow: hidden;
+        }
+
+        .glass::before,
+        .glass::after {
+            content: "";
+            position: absolute;
+            border-radius: 999px;
+            filter: blur(32px);
+            opacity: 0.75;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glass::before {
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.9), transparent 70%);
+            top: -46px;
+            right: -40px;
+        }
+
+        .glass::after {
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.9), transparent 70%);
+            bottom: -38px;
+            left: -40px;
+        }
+
+        /* ===== Main Panel: Analyzer & Generator ===== */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .title-block h1 {
+            font-size: 1.18rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .title-block p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .chip {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(229, 231, 235, 0.24);
+            background:
+                linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(15, 23, 42, 0.96)),
+                radial-gradient(circle at top left, rgba(34, 211, 238, 0.24), transparent 60%);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            color: #e5e7eb;
+        }
+
+        .chip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: var(--radius-pill);
+            background: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+        }
+
+        .sub-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 6px;
+            gap: 10px;
+        }
+
+        label {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+        }
+
+        .hint {
+            font-size: 0.72rem;
+            color: #6b7280;
+        }
+
+        .field-group {
+            margin-bottom: 16px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 120px 12px 12px; /* room for copy + show */
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(148, 163, 184, 0.55);
+            background: rgba(8, 12, 30, 0.96);
+            color: var(--text-main);
+            font-size: 0.9rem;
+            outline: none;
+            transition:
+                border-color 0.18s ease,
+                box-shadow 0.18s ease,
+                background-color 0.18s ease,
+                transform 0.08s ease;
+        }
+
+        input::placeholder {
+            color: #6b7280;
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent-soft);
+            background: rgba(10, 16, 40, 0.98);
+            transform: translateY(-1px);
+        }
+
+        .toggle-visibility {
+            position: absolute;
+            right: 9px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .toggle-visibility:hover {
+            background-color: rgba(15, 23, 42, 0.96);
+            color: var(--text-main);
+        }
+
+        .copy-inline-btn {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: rgba(15, 23, 42, 0.98);
+            color: #9ca3af;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .copy-inline-btn:hover {
+            background: rgba(15, 23, 42, 0.98);
+            color: #e5e7eb;
+            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
+        }
+
+        /* ===== Strength Meter ===== */
+        .meter-wrapper {
+            margin-top: 2px;
+        }
+
+        .strength-bar {
+            position: relative;
+            width: 100%;
+            height: 9px;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(90deg, #020617, #030712);
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, #fb7185, #fb923c);
+            box-shadow: 0 0 20px rgba(251, 146, 60, 0.7);
+            transition: width 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .meter-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            gap: 10px;
+        }
+
+        #strengthText {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .score-pill {
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            border: 1px solid rgba(148, 163, 184, 0.5);
+            background: rgba(8, 12, 30, 0.98);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        /* ===== Checklist ===== */
+        .requirements-title {
+            margin-top: 16px;
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #6b7280;
+        }
+
+        ul {
+            list-style: none;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+
+        .req-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: var(--radius-pill);
+            background: #374151;
+            box-shadow: 0 0 0 1px rgba(55, 65, 81, 0.8);
+            flex-shrink: 0;
+        }
+
+        .req-dot--met {
+            background: var(--success);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.4);
+        }
+
+        .req-label--met {
+            color: var(--text-main);
+        }
+
+        /* ===== Generator Section ===== */
+        .generator {
+            margin-top: 18px;
+            padding-top: 14px;
+            border-top: 1px dashed rgba(55, 65, 81, 0.7);
+        }
+
+        .generator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .generator-header span {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+        }
+
+        .generator-badge {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+            background: rgba(15, 23, 42, 0.98);
+            color: var(--accent);
+            border: 1px solid rgba(34, 211, 238, 0.55);
+        }
+
+        .generator-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .generator-row input {
+            flex: 1;
+        }
+
+        .btn {
+            border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.6);
+            background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.28), transparent 65%),
+                        linear-gradient(135deg, #020617, #111827);
+            color: #f9fafb;
+            font-size: 0.78rem;
+            padding: 9px 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            transition:
+                transform 0.12s ease,
+                box-shadow 0.12s ease,
+                border-color 0.12s ease,
+                background 0.12s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 26px rgba(3, 7, 18, 0.9);
+            border-color: var(--accent-soft);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #020617, #020617);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #020617, #020617);
+        }
+
+        .btn-icon {
+            font-size: 0.9rem;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .option-item {
+            font-size: 0.78rem;
+            padding: 6px 8px;
+            border-radius: 12px;
+            background: rgba(5, 8, 20, 0.96);
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        .toggle {
+            width: 32px;
+            height: 18px;
+            border-radius: var(--radius-pill);
+            background: #020617;
+            border: 1px solid rgba(55, 65, 81, 0.9);
+            position: relative;
+            cursor: pointer;
+            transition: background 0.18s ease, border-color 0.18s ease;
+        }
+
+        .toggle-knob {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: var(--radius-pill);
+            background: #e5e7eb;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.8);
+        }
+
+        .toggle--active {
+            background: rgba(34, 211, 238, 0.18);
+            border-color: rgba(34, 211, 238, 0.9);
+        }
+
+        .toggle--active .toggle-knob {
+            transform: translateX(12px);
+            background: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-soft);
+        }
+
+        .range-row {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            flex: 1;
+            height: 4px;
+            border-radius: var(--radius-pill);
+            background: #020617;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: var(--radius-pill);
+            background: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: var(--radius-pill);
+            background: var(--accent);
+            box-shadow: 0 0 0 4px var(--accent-soft);
+            cursor: pointer;
+        }
+
+        /* ===== Footer microcopy ===== */
+        .footer {
+            margin-top: 14px;
+            font-size: 0.72rem;
+            color: #6b7280;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== Side Panel (Summary / Profile) ===== */
+        .side {
+            padding: 18px 18px 14px;
+        }
+
+        .profile-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-pill);
+            background: conic-gradient(from 200deg, #22d3ee, #8b5cf6, #fb7185, #22d3ee);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #020617;
+            box-shadow: 0 12px 26px rgba(3, 7, 18, 0.95);
+        }
+
+        .profile-text h2 {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .profile-text p {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        .side-section-title {
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            letter-spacing: 0.16em;
+            color: #6b7280;
+            margin-top: 8px;
+            margin-bottom: 6px;
+        }
+
+        .stat-pill {
+            font-size: 0.76rem;
+            padding: 6px 8px;
+            border-radius: 12px;
+            background: rgba(5, 8, 20, 0.98);
+            border: 1px solid rgba(31, 41, 55, 0.9);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            color: var(--text-muted);
+        }
+
+        .stat-pill span:last-child {
+            color: #e5e7eb;
+        }
+
+        .pill-good {
+            border-color: rgba(74, 222, 128, 0.7);
+        }
+
+        .pill-bad {
+            border-color: rgba(248, 113, 113, 0.8);
+        }
+
+        .side-note {
+            font-size: 0.74rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="shell">
+    <!-- Main: Analyzer + Generator -->
+    <div class="glass">
+        <div class="header-row">
+            <div class="title-block">
+                <h1>Password Studio</h1>
+                <p>Analyze, refine, and generate secure credentials with a single view.</p>
+            </div>
+            <div class="chip">
+                <span class="chip-dot"></span>
+                Realtime audit
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="sub-row">
+                <label for="password">Current password</label>
+                <span class="hint">Local only · nothing is sent</span>
+            </div>
+
+            <div class="input-wrapper">
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Type a password to analyze..."
+                />
+                <button class="copy-inline-btn" id="copyMainBtn" type="button">
+                    <span class="btn-icon">📋</span>
+                    <span>Copy</span>
+                </button>
+                <span class="toggle-visibility" id="toggleVisibility">Show</span>
+            </div>
+
+            <div class="meter-wrapper">
+                <div class="strength-bar">
+                    <div id="strengthFill" class="strength-fill"></div>
+                </div>
+                <div class="meter-footer">
+                    <p id="strengthText">Start typing to see a live strength score.</p>
+                    <span class="score-pill" id="scorePill">Score: 0 / 5</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="requirements-title">Security checklist</p>
+        <ul id="suggestions">
+            <li>
+                <span class="req-dot"></span>
+                <span class="req-label">At least 8 characters</span>
+            </li>
+            <li>
+                <span class="req-dot"></span>
+                <span class="req-label">Contains an uppercase letter</span>
+            </li>
+            <li>
+                <span class="req-dot"></span>
+                <span class="req-label">Contains a lowercase letter</span>
+            </li>
+            <li>
+                <span class="req-dot"></span>
+                <span class="req-label">Contains a number</span>
+            </li>
+            <li>
+                <span class="req-dot"></span>
+                <span class="req-label">Contains a special character (!@#$%^&*)</span>
+            </li>
+        </ul>
+
+        <!-- Generator Section -->
+        <div class="generator">
+            <div class="generator-header">
+                <span>Password generator</span>
+                <span class="generator-badge">Guided entropy</span>
+            </div>
+
+            <div class="generator-row">
+                <input
+                    type="text"
+                    id="generatedPassword"
+                    placeholder="Generate a strong password..."
+                    readonly
+                />
+                <button class="btn" id="generateBtn">
+                    <span class="btn-icon">⚡</span>
+                    <span>Generate</span>
+                </button>
+                <button class="btn btn-secondary" id="copyBtn">
+                    <span class="btn-icon">📋</span>
+                    <span>Copy</span>
+                </button>
+            </div>
+
+            <div class="range-row">
+                <span>Length</span>
+                <input type="range" id="lengthRange" min="8" max="32" value="14" />
+                <span id="lengthValue">14</span>
+            </div>
+
+            <div class="options-grid">
+                <div class="option-item" data-option="uppercase">
+                    <span>Uppercase A–Z</span>
+                    <div class="toggle toggle--active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+                <div class="option-item" data-option="lowercase">
+                    <span>Lowercase a–z</span>
+                    <div class="toggle toggle--active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+                <div class="option-item" data-option="numbers">
+                    <span>Numbers 0–9</span>
+                    <div class="toggle toggle--active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+                <div class="option-item" data-option="symbols">
+                    <span>Symbols !@#$</span>
+                    <div class="toggle toggle--active">
+                        <div class="toggle-knob"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>Tip: Aim for length + variety; avoid personal details and common words.</span>
+            <span>Prototype UI · not a cloud password vault.</span>
+        </div>
+    </div>
+
+    <!-- Side Panel: Summary / Profile -->
+    <div class="glass side">
+        <div class="profile-block">
+            <div class="avatar">PS</div>
+            <div class="profile-text">
+                <h2>Strength overview</h2>
+                <p>Snapshot of the password you are currently testing.</p>
+            </div>
+        </div>
+
+        <p class="side-section-title">Live assessment</p>
+
+        <div class="stat-pill pill-bad" id="statStrength">
+            <span>Strength</span>
+            <span id="statStrengthValue">Weak</span>
+        </div>
+        <div class="stat-pill" id="statLength">
+            <span>Length</span>
+            <span id="statLengthValue">0 characters</span>
+        </div>
+        <div class="stat-pill" id="statDiversity">
+            <span>Character types</span>
+            <span id="statDiversityValue">0 / 4</span>
+        </div>
+
+        <p class="side-section-title">Best practice</p>
+        <p class="side-note" id="sideNote">
+            Use unique passwords per account and pair them with two‑factor authentication for critical services.
+        </p>
+    </div>
+</div>
+
+<script>
+    const passwordInput = document.getElementById("password");
+    const strengthFill = document.getElementById("strengthFill");
+    const strengthText = document.getElementById("strengthText");
+    const scorePill = document.getElementById("scorePill");
+    const suggestionList = document.getElementById("suggestions");
+    const toggleVisibility = document.getElementById("toggleVisibility");
+    const copyMainBtn = document.getElementById("copyMainBtn");
+
+    const generatedPasswordInput = document.getElementById("generatedPassword");
+    const generateBtn = document.getElementById("generateBtn");
+    const copyBtn = document.getElementById("copyBtn");
+    const lengthRange = document.getElementById("lengthRange");
+    const lengthValue = document.getElementById("lengthValue");
+    const optionItems = document.querySelectorAll(".option-item");
+
+    const statStrength = document.getElementById("statStrength");
+    const statStrengthValue = document.getElementById("statStrengthValue");
+    const statLengthValue = document.getElementById("statLengthValue");
+    const statDiversityValue = document.getElementById("statDiversityValue");
+    const sideNote = document.getElementById("sideNote");
+
+    const requirements = [
+        {
+            key: "length",
+            test: (pwd) => pwd.length >= 8,
+            label: "At least 8 characters"
+        },
+        {
+            key: "upper",
+            test: (pwd) => /[A-Z]/.test(pwd),
+            label: "Contains an uppercase letter"
+        },
+        {
+            key: "lower",
+            test: (pwd) => /[a-z]/.test(pwd),
+            label: "Contains a lowercase letter"
+        },
+        {
+            key: "number",
+            test: (pwd) => /[0-9]/.test(pwd),
+            label: "Contains a number"
+        },
+        {
+            key: "symbol",
+            test: (pwd) => /[!@#$%^&*]/.test(pwd),
+            label: "Contains a special character (!@#$%^&*)"
+        }
+    ];
+
+    function evaluatePassword(password) {
+        let score = 0;
+        const meta = [];
+
+        requirements.forEach((req) => {
+            const passed = req.test(password);
+            if (passed) score++;
+            meta.push({ ...req, passed });
+        });
+
+        return { score, meta };
+    }
+
+    function updateChecklist(meta) {
+        suggestionList.innerHTML = "";
+        meta.forEach((item) => {
+            const li = document.createElement("li");
+
+            const dot = document.createElement("span");
+            dot.className = "req-dot";
+            if (item.passed) {
+                dot.classList.add("req-dot--met");
+            }
+
+            const label = document.createElement("span");
+            label.className = "req-label";
+            if (item.passed) {
+                label.classList.add("req-label--met");
+            }
+            label.textContent = item.label;
+
+            li.appendChild(dot);
+            li.appendChild(label);
+            suggestionList.appendChild(li);
+        });
+    }
+
+    function updateSidePanel(password, score, meta) {
+        const length = password.length;
+        const diversityCount = [
+            /[A-Z]/.test(password),
+            /[a-z]/.test(password),
+            /[0-9]/.test(password),
+            /[!@#$%^&*]/.test(password)
+        ].filter(Boolean).length;
+
+        statLengthValue.textContent = length + (length === 1 ? " character" : " characters");
+        statDiversityValue.textContent = diversityCount + " / 4";
+
+        if (!password) {
+            statStrength.classList.remove("pill-good", "pill-bad");
+            statStrengthValue.textContent = "—";
+            sideNote.textContent = "Start typing to see how your password scores on length and diversity.";
+            return;
+        }
+
+        if (score <= 2) {
+            statStrength.classList.add("pill-bad");
+            statStrength.classList.remove("pill-good");
+            statStrengthValue.textContent = "Weak";
+            sideNote.textContent = "Extend the length and mix upper, lower, numbers and symbols for a safer baseline.";
+        } else if (score === 3 || score === 4) {
+            statStrength.classList.remove("pill-bad");
+            statStrength.classList.remove("pill-good");
+            statStrengthValue.textContent = "Moderate";
+            sideNote.textContent = "You are close. Add more length and one extra character type to harden this.";
+        } else {
+            statStrength.classList.add("pill-good");
+            statStrength.classList.remove("pill-bad");
+            statStrengthValue.textContent = "Strong";
+            sideNote.textContent = "Looks solid. Still, keep this unique per service and rotate critical credentials periodically.";
+        }
+    }
+
+    function updateUI() {
+        const password = passwordInput.value;
+        const { score, meta } = evaluatePassword(password);
+
+        scorePill.textContent = `Score: ${score} / ${requirements.length}`;
+
+        const percent = (score / requirements.length) * 100;
+        strengthFill.style.width = percent + "%";
+
+        if (!password) {
+            strengthText.textContent = "Start typing to see a live strength score.";
+            strengthFill.style.width = "0%";
+            strengthFill.style.background = "linear-gradient(90deg, #4b5563, #6b7280)";
+            strengthFill.style.boxShadow = "none";
+        } else if (score <= 2) {
+            strengthText.textContent = "Weak — easy to guess. Increase length and avoid predictable patterns.";
+            strengthFill.style.background = "linear-gradient(90deg, #fb7185, #fb923c)";
+            strengthFill.style.boxShadow = "0 0 22px rgba(251, 113, 133, 0.85)";
+        } else if (score === 3 || score === 4) {
+            strengthText.textContent = "Moderate — usable, but can still be hardened further.";
+            strengthFill.style.background = "linear-gradient(90deg, #facc15, #4ade80)";
+            strengthFill.style.boxShadow = "0 0 22px rgba(250, 204, 21, 0.8)";
+        } else {
+            strengthText.textContent = "Strong — resilient against basic cracking attempts.";
+            strengthFill.style.background = "linear-gradient(90deg, #22d3ee, #8b5cf6)";
+            strengthFill.style.boxShadow = "0 0 24px rgba(139, 92, 246, 0.85)";
+        }
+
+        updateChecklist(meta);
+        updateSidePanel(password, score, meta);
+    }
+
+    function togglePasswordVisibility() {
+        const isPassword = passwordInput.type === "password";
+        passwordInput.type = isPassword ? "text" : "password";
+        toggleVisibility.textContent = isPassword ? "Hide" : "Show";
+    }
+
+    function copyMainPassword() {
+        const value = passwordInput.value.trim();
+        if (!value) {
+            alert("Type or generate a password first.");
+            return;
+        }
+        navigator.clipboard.writeText(value).then(
+            () => {
+                copyMainBtn.innerHTML = '<span class="btn-icon">✓</span><span>Copied</span>';
+                setTimeout(() => {
+                    copyMainBtn.innerHTML = '<span class="btn-icon">📋</span><span>Copy</span>';
+                }, 1200);
+            },
+            () => {
+                alert("Unable to copy to clipboard.");
+            }
+        );
+    }
+
+    function getGeneratorOptions() {
+        const options = {
+            uppercase: true,
+            lowercase: true,
+            numbers: true,
+            symbols: true
+        };
+
+        optionItems.forEach((item) => {
+            const key = item.getAttribute("data-option");
+            const toggle = item.querySelector(".toggle");
+            const isActive = toggle.classList.contains("toggle--active");
+            options[key] = isActive;
+        });
+
+        return options;
+    }
+
+    function generatePassword() {
+        const length = parseInt(lengthRange.value, 10);
+        const opts = getGeneratorOptions();
+
+        const sets = {
+            uppercase: "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            lowercase: "abcdefghijklmnopqrstuvwxyz",
+            numbers: "0123456789",
+            symbols: "!@#$%^&*"
+        };
+
+        let activeSets = [];
+        Object.keys(opts).forEach((key) => {
+            if (opts[key]) {
+                activeSets.push(sets[key]);
+            }
+        });
+
+        if (activeSets.length === 0) {
+            alert("Select at least one character type to generate a password.");
+            return;
+        }
+
+        let password = "";
+        const allChars = activeSets.join("");
+
+        // Ensure at least one char from each selected set
+        activeSets.forEach((set) => {
+            password += set[Math.floor(Math.random() * set.length)];
+        });
+
+        // Fill remaining length
+        for (let i = password.length; i < length; i++) {
+            password += allChars[Math.floor(Math.random() * allChars.length)];
+        }
+
+        // Shuffle the password
+        password = password
+            .split("")
+            .sort(() => Math.random() - 0.5)
+            .join("");
+
+        generatedPasswordInput.value = password;
+        passwordInput.value = password;
+        updateUI();
+    }
+
+    function copyGeneratedPassword() {
+        const value = generatedPasswordInput.value.trim();
+        if (!value) {
+            alert("Generate a password first.");
+            return;
+        }
+        navigator.clipboard.writeText(value).then(
+            () => {
+                copyBtn.innerHTML = '<span class="btn-icon">✓</span><span>Copied</span>';
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<span class="btn-icon">📋</span><span>Copy</span>';
+                }, 1200);
+            },
+            () => {
+                alert("Unable to copy to clipboard.");
+            }
+        );
+    }
+
+    function toggleOption(event) {
+        const toggle = event.currentTarget.querySelector(".toggle");
+        toggle.classList.toggle("toggle--active");
+    }
+
+    // Event listeners
+    passwordInput.addEventListener("input", updateUI);
+    toggleVisibility.addEventListener("click", togglePasswordVisibility);
+    copyMainBtn.addEventListener("click", copyMainPassword);
+    generateBtn.addEventListener("click", generatePassword);
+    copyBtn.addEventListener("click", copyGeneratedPassword);
+    lengthRange.addEventListener("input", () => {
+        lengthValue.textContent = lengthRange.value;
+    });
+
+    optionItems.forEach((item) => {
+        item.addEventListener("click", toggleOption);
+    });
+
+    // Initial UI
+    updateUI();
+    lengthValue.textContent = lengthRange.value;
+</script>
+
+</body>
+</html>
