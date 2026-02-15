@@ -14,7 +14,6 @@
         }
 
         :root {
-            /* Aurora blue–cyan–purple palette */
             --bg: #020617;
             --bg-soft: #030712;
             --glass: rgba(15, 23, 42, 0.86);
@@ -23,9 +22,9 @@
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
 
-            --accent: #22d3ee;          /* cyan */
+            --accent: #22d3ee;
             --accent-soft: rgba(34, 211, 238, 0.45);
-            --accent-alt: #8b5cf6;      /* soft purple */
+            --accent-alt: #8b5cf6;
             --danger: #fb7185;
             --success: #4ade80;
 
@@ -48,7 +47,6 @@
             padding: 20px;
         }
 
-        /* ===== Layout Wrapper ===== */
         .shell {
             max-width: 920px;
             width: 100%;
@@ -63,7 +61,6 @@
             }
         }
 
-        /* ===== Glass Panel Base ===== */
         .glass {
             position: relative;
             border-radius: var(--radius-lg);
@@ -107,7 +104,6 @@
             left: -40px;
         }
 
-        /* ===== Main Panel: Analyzer & Generator ===== */
         .header-row {
             display: flex;
             justify-content: space-between;
@@ -185,7 +181,7 @@
         input[type="password"],
         input[type="text"] {
             width: 100%;
-            padding: 12px 120px 12px 12px; /* room for copy + show */
+            padding: 10px 8px 10px 10px; /* normal padding; buttons are outside input but inside wrapper */
             border-radius: var(--radius-md);
             border: 1px solid rgba(148, 163, 184, 0.55);
             background: rgba(8, 12, 30, 0.96);
@@ -210,51 +206,42 @@
             transform: translateY(-1px);
         }
 
-        .toggle-visibility {
+        /* container that holds Clear / Copy / Show together */
+        .input-actions {
             position: absolute;
-            right: 9px;
+            right: 6px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            user-select: none;
-            padding: 4px 8px;
-            border-radius: var(--radius-pill);
-            transition: background-color 0.15s ease, color 0.15s ease;
-        }
-
-        .toggle-visibility:hover {
-            background-color: rgba(15, 23, 42, 0.96);
-            color: var(--text-main);
-        }
-
-        .copy-inline-btn {
-            position: absolute;
-            right: 70px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: none;
-            outline: none;
-            cursor: pointer;
-            background: rgba(15, 23, 42, 0.98);
-            color: #9ca3af;
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: var(--radius-pill);
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+            background: rgba(2, 6, 23, 0.85);
+            padding: 2px 3px;
+            border-radius: 999px;
         }
 
-        .copy-inline-btn:hover {
-            background: rgba(15, 23, 42, 0.98);
+        .copy-inline-btn,
+        .toggle-visibility {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: transparent;
+            color: #9ca3af;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            white-space: nowrap;
+            transition: background-color 0.15s ease, color 0.15s ease;
+        }
+
+        .copy-inline-btn:hover,
+        .toggle-visibility:hover {
+            background-color: rgba(15, 23, 42, 0.96);
             color: #e5e7eb;
-            box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.6);
         }
 
-        /* ===== Strength Meter ===== */
         .meter-wrapper {
             margin-top: 2px;
         }
@@ -301,7 +288,6 @@
             white-space: nowrap;
         }
 
-        /* ===== Checklist ===== */
         .requirements-title {
             margin-top: 16px;
             font-size: 0.74rem;
@@ -342,7 +328,6 @@
             color: var(--text-main);
         }
 
-        /* ===== Generator Section ===== */
         .generator {
             margin-top: 18px;
             padding-top: 14px;
@@ -375,7 +360,7 @@
 
         .generator-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             margin-bottom: 10px;
         }
@@ -385,18 +370,18 @@
         }
 
         .btn {
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid rgba(148, 163, 184, 0.6);
             background: radial-gradient(circle at top left, rgba(34, 211, 238, 0.28), transparent 65%),
                         linear-gradient(135deg, #020617, #111827);
             color: #f9fafb;
-            font-size: 0.78rem;
-            padding: 9px 12px;
+            font-size: 0.72rem;
+            padding: 7px 9px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             white-space: nowrap;
             transition:
                 transform 0.12s ease,
@@ -407,7 +392,7 @@
 
         .btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 14px 26px rgba(3, 7, 18, 0.9);
+            box-shadow: 0 10px 18px rgba(3, 7, 18, 0.9);
             border-color: var(--accent-soft);
         }
 
@@ -417,10 +402,6 @@
 
         .btn-secondary:hover {
             background: linear-gradient(135deg, #020617, #020617);
-        }
-
-        .btn-icon {
-            font-size: 0.9rem;
         }
 
         .options-grid {
@@ -444,8 +425,8 @@
         }
 
         .toggle {
-            width: 32px;
-            height: 18px;
+            width: 30px;
+            height: 16px;
             border-radius: var(--radius-pill);
             background: #020617;
             border: 1px solid rgba(55, 65, 81, 0.9);
@@ -456,8 +437,8 @@
 
         .toggle-knob {
             position: absolute;
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
             border-radius: var(--radius-pill);
             background: #e5e7eb;
             top: 1px;
@@ -516,7 +497,6 @@
             cursor: pointer;
         }
 
-        /* ===== Footer microcopy ===== */
         .footer {
             margin-top: 14px;
             font-size: 0.72rem;
@@ -527,7 +507,6 @@
             flex-wrap: wrap;
         }
 
-        /* ===== Side Panel (Summary / Profile) ===== */
         .side {
             padding: 18px 18px 14px;
         }
@@ -602,29 +581,29 @@
             color: var(--text-muted);
             margin-top: 8px;
         }
+
         .logo {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 1px solid rgba(148, 163, 184, 0.4);
-    box-shadow: 0 6px 18px rgba(3, 7, 18, 0.8);
-}
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            box-shadow: 0 6px 18px rgba(3, 7, 18, 0.8);
+        }
     </style>
 </head>
 <body>
 
 <div class="shell">
-    <!-- Main: Analyzer + Generator -->
     <div class="glass">
         <div class="header-row">
             <div class="title-block" style="display:flex; align-items:center; gap:10px;">
-    <img src="pass.webp" alt="Password Studio Logo"class="logo">
-    <div>
-        <h1>Password Studio</h1>
-        <p>Analyze, refine, and generate secure credentials with a single view.</p>
-    </div>
-</div>
+                <img src="pass.webp" alt="Password Studio Logo" class="logo">
+                <div>
+                    <h1>Password Studio</h1>
+                    <p>Analyze, refine, and generate secure credentials with a single view.</p>
+                </div>
+            </div>
             <div class="chip">
                 <span class="chip-dot"></span>
                 Realtime audit
@@ -643,11 +622,17 @@
                     id="password"
                     placeholder="Type a password to analyze..."
                 />
-                <button class="copy-inline-btn" id="copyMainBtn" type="button">
-                    <span class="btn-icon">📋</span>
-                    <span>Copy</span>
-                </button>
-                <span class="toggle-visibility" id="toggleVisibility">Show</span>
+                <div class="input-actions">
+                    <button class="copy-inline-btn" id="clearMainBtn" type="button">
+                        Clear
+                    </button>
+                    <button class="copy-inline-btn" id="copyMainBtn" type="button">
+                        Copy
+                    </button>
+                    <button class="toggle-visibility" id="toggleVisibility" type="button">
+                        Show
+                    </button>
+                </div>
             </div>
 
             <div class="meter-wrapper">
@@ -685,7 +670,6 @@
             </li>
         </ul>
 
-        <!-- Generator Section -->
         <div class="generator">
             <div class="generator-header">
                 <span>Password generator</span>
@@ -700,12 +684,13 @@
                     readonly
                 />
                 <button class="btn" id="generateBtn">
-                    <span class="btn-icon">⚡</span>
-                    <span>Generate</span>
+                    Generate
+                </button>
+                <button class="btn btn-secondary" id="clearGenBtn">
+                    Clear
                 </button>
                 <button class="btn btn-secondary" id="copyBtn">
-                    <span class="btn-icon">📋</span>
-                    <span>Copy</span>
+                    Copy
                 </button>
             </div>
 
@@ -749,10 +734,9 @@
         </div>
     </div>
 
-    <!-- Side Panel: Summary / Profile -->
     <div class="glass side">
         <div class="profile-block">
-            <img src="pass.webp" alt="Password Studio Logo"class="logo">
+            <img src="pass.webp" alt="Password Studio Logo" class="logo">
             <div class="profile-text">
                 <h2>Strength overview</h2>
                 <p>Snapshot of the password you are currently testing.</p>
@@ -789,10 +773,12 @@
     const suggestionList = document.getElementById("suggestions");
     const toggleVisibility = document.getElementById("toggleVisibility");
     const copyMainBtn = document.getElementById("copyMainBtn");
+    const clearMainBtn = document.getElementById("clearMainBtn");
 
     const generatedPasswordInput = document.getElementById("generatedPassword");
     const generateBtn = document.getElementById("generateBtn");
     const copyBtn = document.getElementById("copyBtn");
+    const clearGenBtn = document.getElementById("clearGenBtn");
     const lengthRange = document.getElementById("lengthRange");
     const lengthValue = document.getElementById("lengthValue");
     const optionItems = document.querySelectorAll(".option-item");
@@ -804,31 +790,11 @@
     const sideNote = document.getElementById("sideNote");
 
     const requirements = [
-        {
-            key: "length",
-            test: (pwd) => pwd.length >= 8,
-            label: "At least 8 characters"
-        },
-        {
-            key: "upper",
-            test: (pwd) => /[A-Z]/.test(pwd),
-            label: "Contains an uppercase letter"
-        },
-        {
-            key: "lower",
-            test: (pwd) => /[a-z]/.test(pwd),
-            label: "Contains a lowercase letter"
-        },
-        {
-            key: "number",
-            test: (pwd) => /[0-9]/.test(pwd),
-            label: "Contains a number"
-        },
-        {
-            key: "symbol",
-            test: (pwd) => /[!@#$%^&*]/.test(pwd),
-            label: "Contains a special character (!@#$%^&*)"
-        }
+        { key: "length", test: (pwd) => pwd.length >= 8, label: "At least 8 characters" },
+        { key: "upper",  test: (pwd) => /[A-Z]/.test(pwd), label: "Contains an uppercase letter" },
+        { key: "lower",  test: (pwd) => /[a-z]/.test(pwd), label: "Contains a lowercase letter" },
+        { key: "number", test: (pwd) => /[0-9]/.test(pwd), label: "Contains a number" },
+        { key: "symbol", test: (pwd) => /[!@#$%^&*]/.test(pwd), label: "Contains a special character (!@#$%^&*)" }
     ];
 
     function evaluatePassword(password) {
@@ -951,15 +917,20 @@
         }
         navigator.clipboard.writeText(value).then(
             () => {
-                copyMainBtn.innerHTML = '<span class="btn-icon">✓</span><span>Copied</span>';
+                copyMainBtn.textContent = "Copied";
                 setTimeout(() => {
-                    copyMainBtn.innerHTML = '<span class="btn-icon">📋</span><span>Copy</span>';
+                    copyMainBtn.textContent = "Copy";
                 }, 1200);
             },
             () => {
                 alert("Unable to copy to clipboard.");
             }
         );
+    }
+
+    function clearMainPassword() {
+        passwordInput.value = "";
+        updateUI();
     }
 
     function getGeneratorOptions() {
@@ -1006,17 +977,14 @@
         let password = "";
         const allChars = activeSets.join("");
 
-        // Ensure at least one char from each selected set
         activeSets.forEach((set) => {
             password += set[Math.floor(Math.random() * set.length)];
         });
 
-        // Fill remaining length
         for (let i = password.length; i < length; i++) {
             password += allChars[Math.floor(Math.random() * allChars.length)];
         }
 
-        // Shuffle the password
         password = password
             .split("")
             .sort(() => Math.random() - 0.5)
@@ -1027,6 +995,10 @@
         updateUI();
     }
 
+    function clearGeneratedPassword() {
+        generatedPasswordInput.value = "";
+    }
+
     function copyGeneratedPassword() {
         const value = generatedPasswordInput.value.trim();
         if (!value) {
@@ -1035,9 +1007,9 @@
         }
         navigator.clipboard.writeText(value).then(
             () => {
-                copyBtn.innerHTML = '<span class="btn-icon">✓</span><span>Copied</span>';
+                copyBtn.textContent = "Copied";
                 setTimeout(() => {
-                    copyBtn.innerHTML = '<span class="btn-icon">📋</span><span>Copy</span>';
+                    copyBtn.textContent = "Copy";
                 }, 1200);
             },
             () => {
@@ -1051,12 +1023,13 @@
         toggle.classList.toggle("toggle--active");
     }
 
-    // Event listeners
     passwordInput.addEventListener("input", updateUI);
     toggleVisibility.addEventListener("click", togglePasswordVisibility);
     copyMainBtn.addEventListener("click", copyMainPassword);
+    clearMainBtn.addEventListener("click", clearMainPassword);
     generateBtn.addEventListener("click", generatePassword);
     copyBtn.addEventListener("click", copyGeneratedPassword);
+    clearGenBtn.addEventListener("click", clearGeneratedPassword);
     lengthRange.addEventListener("input", () => {
         lengthValue.textContent = lengthRange.value;
     });
@@ -1065,7 +1038,6 @@
         item.addEventListener("click", toggleOption);
     });
 
-    // Initial UI
     updateUI();
     lengthValue.textContent = lengthRange.value;
 </script>
