@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Password Studio · Strength & Generator</title>
+    <title>Password Studio</title>
+    <link rel="icon" type="image/webp" href="pass.webp">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
         /* ===== Reset ===== */
@@ -601,6 +602,14 @@
             color: var(--text-muted);
             margin-top: 8px;
         }
+        .logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    box-shadow: 0 6px 18px rgba(3, 7, 18, 0.8);
+}
     </style>
 </head>
 <body>
@@ -610,7 +619,7 @@
     <div class="glass">
         <div class="header-row">
             <div class="title-block" style="display:flex; align-items:center; gap:10px;">
-    <img src="pass.webp" alt="Password Studio Logo" style="width:32px; height:32px; object-fit:contain;">
+    <img src="pass.webp" alt="Password Studio Logo"class="logo">
     <div>
         <h1>Password Studio</h1>
         <p>Analyze, refine, and generate secure credentials with a single view.</p>
@@ -743,7 +752,7 @@
     <!-- Side Panel: Summary / Profile -->
     <div class="glass side">
         <div class="profile-block">
-            <div class="avatar">PS</div>
+            <img src="pass.webp" alt="Password Studio Logo"class="logo">
             <div class="profile-text">
                 <h2>Strength overview</h2>
                 <p>Snapshot of the password you are currently testing.</p>
